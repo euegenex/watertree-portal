@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watertree • Equipment Support & Care Portal</title>
+  
+  <!-- Typography: Cormorant Garamond (Editorial Serif) & Plus Jakarta Sans (Clean Modern Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'forest-black': '#041B1F',
+            'forest-dark': '#062328',
+            'deep-teal': '#0A3C42',
+            'teal-card': '#082E33',
+            'soft-aqua': '#2F9FA8',
+            'soft-aqua-light': '#58D3DD',
+            'lime-leaf': '#70B237',
+            'gold-accent': '#D4AF37',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Aileron', '-apple-system', 'sans-serif'],
+            serif: ['"Cormorant Garamond"', 'Magnolia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #041B1F;
+      color: #F1F5F9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Ambient luxury glow */
+    .glow-orb-1 {
+      position: fixed;
+      top: -160px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 760px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(47, 159, 168, 0.22) 0%, rgba(10, 60, 66, 0.15) 45%, transparent 70%);
+      filter: blur(65px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glass container card */
+    .luxury-card {
+      background: linear-gradient(180deg, rgba(8, 46, 51, 0.8) 0%, rgba(4, 27, 31, 0.95) 100%);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(47, 159, 168, 0.28);
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 
+                  0 0 50px rgba(47, 159, 168, 0.08),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    /* Form Inputs */
+    .form-input {
+      background-color: rgba(4, 27, 31, 0.75);
+      border: 1px solid rgba(47, 159, 168, 0.3);
+      color: #FFFFFF;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .form-input:hover {
+      border-color: rgba(47, 159, 168, 0.6);
+      background-color: rgba(10, 60, 66, 0.45);
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #2F9FA8;
+      box-shadow: 0 0 0 4px rgba(47, 159, 168, 0.18), 0 0 20px rgba(47, 159, 168, 0.15);
+      background-color: rgba(10, 60, 66, 0.7);
+    }
+
+    /* Category Pill Selector */
+    .cat-btn.active {
+      background: linear-gradient(135deg, rgba(47, 159, 168, 0.28) 0%, rgba(10, 60, 66, 0.85) 100%);
+      border-color: #2F9FA8;
+      color: #FFFFFF;
+      box-shadow: 0 0 20px rgba(47, 159, 168, 0.25);
+    }
+
+    /* Query Radio Pill Selector */
+    .query-option input:checked + .query-box {
+      background: linear-gradient(135deg, rgba(47, 159, 168, 0.25) 0%, rgba(10, 60, 66, 0.85) 100%);
+      border-color: #2F9FA8;
+      color: #FFFFFF;
+      box-shadow: 0 4px 20px rgba(47, 159, 168, 0.2);
+    }
+    .query-option input:checked + .query-box .dot {
+      background-color: #2F9FA8;
+      border-color: #2F9FA8;
+      box-shadow: 0 0 8px #2F9FA8;
+    }
+
+    /* Urgency Segmented Control */
+    .urgency-btn.active-low {
+      background-color: rgba(47, 159, 168, 0.2);
+      border-color: #2F9FA8;
+      color: #58D3DD;
+    }
+    .urgency-btn.active-med {
+      background-color: rgba(212, 175, 55, 0.15);
+      border-color: #D4AF37;
+      color: #F6E05E;
+    }
+    .urgency-btn.active-high {
+      background-color: rgba(239, 68, 68, 0.18);
+      border-color: #EF4444;
+      color: #FCA5A5;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    /* Submit Button */
+    .submit-gold-btn {
+      background: linear-gradient(135deg, #2F9FA8 0%, #1F7C84 100%);
+      box-shadow: 0 10px 25px -5px rgba(47, 159, 168, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transition: all 0.3s ease;
+    }
+    .submit-gold-btn:hover {
+      background: linear-gradient(135deg, #37B4BE 0%, #25919B 100%);
+      box-shadow: 0 14px 30px -5px rgba(47, 159, 168, 0.55);
+      transform: translateY(-1px);
+    }
+    .submit-gold-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen relative flex flex-col items-center justify-center p-3 sm:p-8">
+
+  <!-- WATERTREE TOPOGRAPHIC WAVES: TOP-SIDE BACKDROP -->
+  <div class="fixed top-0 left-0 right-0 h-80 sm:h-96 overflow-hidden pointer-events-none z-0 opacity-45">
+    <svg class="w-full h-full object-cover" viewBox="0 0 1440 380" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="waveGradTeal" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#0A3C42" stop-opacity="0.3"/>
+          <stop offset="50%" stop-color="#2F9FA8" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#0A3C42" stop-opacity="0.2"/>
+        </linearGradient>
+        <linearGradient id="waveGradAqua" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#2F9FA8" stop-opacity="0.2"/>
+          <stop offset="60%" stop-color="#58D3DD" stop-opacity="0.45"/>
+          <stop offset="100%" stop-color="#70B237" stop-opacity="0.25"/>
+        </linearGradient>
+      </defs>
+
+      <path d="M-60,50 C240,140 520,10 820,95 C1120,180 1320,60 1500,100" stroke="url(#waveGradAqua)" stroke-width="1.6" fill="none"/>
+      <path d="M-60,95 C280,185 580,60 880,140 C1180,220 1340,110 1500,145" stroke="url(#waveGradTeal)" stroke-width="1.2" stroke-dasharray="6 6" fill="none"/>
+      <path d="M-60,140 C220,230 500,110 800,180 C1100,250 1300,150 1500,185" stroke="#2F9FA8" stroke-opacity="0.3" stroke-width="1" fill="none"/>
+      <path d="M-60,185 C260,270 540,155 840,225 C1140,295 1350,200 1500,230" stroke="#70B237" stroke-opacity="0.22" stroke-width="1.4" fill="none"/>
+      <path d="M-60,230 C300,310 600,200 900,265 C1200,330 1380,240 1500,275" stroke="#2F9FA8" stroke-opacity="0.2" stroke-width="0.8" stroke-dasharray="4 4" fill="none"/>
+      <path d="M-60,280 C340,360 640,250 940,310 C1240,370 1410,290 1500,320" stroke="#0A3C42" stroke-opacity="0.45" stroke-width="2" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="glow-orb-1"></div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="w-full max-w-2xl relative z-10 my-4 sm:my-8">
+
+    <div class="luxury-card rounded-[2rem] p-6 sm:p-12 relative overflow-hidden">
+      
+      <!-- Topographic Contour Detail -->
+      <div class="absolute -top-12 -right-12 w-64 h-64 opacity-25 pointer-events-none">
+        <svg viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M30,0 C70,90 150,140 250,170" stroke="#2F9FA8" stroke-width="1.5" fill="none"/>
+          <path d="M0,40 C60,120 130,170 250,210" stroke="#2F9FA8" stroke-width="1.2" stroke-dasharray="5 5" fill="none"/>
+          <path d="M0,90 C50,160 110,210 210,250" stroke="#70B237" stroke-width="1.2" fill="none"/>
+          <path d="M0,140 C40,195 90,235 170,250" stroke="#58D3DD" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- HEADER -->
+      <header class="text-center pb-8 border-b border-white/10 relative">
+        
+        <div class="mb-5 flex justify-center">
+          <img src="/static/logo.png" alt="Watertree" class="h-11 sm:h-12 w-auto object-contain brightness-125 drop-shadow-[0_4px_16px_rgba(47,159,168,0.3)]">
+        </div>
+
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-forest-black/80 border border-soft-aqua/30 text-soft-aqua text-[10px] sm:text-[11px] font-semibold tracking-[0.25em] uppercase mb-4 shadow-inner">
+          <span class="w-1.5 h-1.5 rounded-full bg-lime-leaf animate-ping"></span>
+          <span>Technical Support & Maintenance</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl lg:text-[42px] font-serif text-white tracking-tight leading-tight mb-3">
+          Equipment Support & Care
+        </h1>
+
+        <p class="text-xs sm:text-sm text-slate-300/90 max-w-md mx-auto font-light leading-relaxed">
+          Log equipment service queries, maintenance alerts, or performance observations for the Watertree technical care team.
+        </p>
+      </header>
+
+      <!-- FORM -->
+      <form id="equipmentQueryForm" class="mt-8 space-y-7">
+        
+        <!-- 1. FACILITY NAME -->
+        <div class="space-y-2">
+          <label for="gymLocation" class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+            <span>1. Facility Name</span>
+            <span class="text-lime-leaf font-mono text-xs">* Required</span>
+          </label>
+          <input 
+            type="text" 
+            id="gymLocation" 
+            required 
+            placeholder="Enter facility or fitness space name" 
+            class="form-input w-full rounded-2xl px-4 py-3.5 text-sm placeholder:text-slate-500/80"
+          >
+        </div>
+
+        <!-- 2. EQUIPMENT CATEGORY -->
+        <div class="space-y-2.5">
+          <label class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+            <span>2. Equipment Category</span>
+            <span class="text-lime-leaf font-mono text-xs">*</span>
+          </label>
+          <input type="hidden" id="equipmentCategory" value="Cardio" required>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="categoryGrid">
+            <button type="button" data-val="Cardio" class="cat-btn active py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">🏃</span>
+              <span>Cardio</span>
+            </button>
+            <button type="button" data-val="Strength Machine" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">🏋️</span>
+              <span>Strength</span>
+            </button>
+            <button type="button" data-val="Cables & Pulley" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">⛓️</span>
+              <span>Cables</span>
+            </button>
+            <button type="button" data-val="Free Weights" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">🦾</span>
+              <span>Free Weights</span>
+            </button>
+            <button type="button" data-val="Racks & Benches" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">📐</span>
+              <span>Racks & Benches</span>
+            </button>
+            <button type="button" data-val="Wellness & Studio" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">🌿</span>
+              <span>Wellness & Spa</span>
+            </button>
+            <button type="button" data-val="Flooring & Fixtures" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">🧱</span>
+              <span>Surfaces</span>
+            </button>
+            <button type="button" data-val="Other / General" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
+              <span class="text-sm">⚙️</span>
+              <span>Other Element</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. BRAND & 4. MACHINE IDENTIFIER -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label for="brandSelect" class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+              3. Brand
+            </label>
+            <div class="relative">
+              <select id="brandSelect" class="form-input w-full rounded-2xl px-4 py-3.5 text-sm appearance-none cursor-pointer pr-10">
+                <option value="Any / Not Specified" class="bg-forest-black">Any / Not Specified</option>
+                <option value="Matrix / Vision" class="bg-forest-black">Matrix / Vision</option>
+                <option value="Eleiko" class="bg-forest-black">Eleiko</option>
+                <option value="Woodway" class="bg-forest-black">Woodway</option>
+                <option value="TKO Strength" class="bg-forest-black">TKO Strength</option>
+                <option value="Tunturi" class="bg-forest-black">Tunturi</option>
+                <option value="ZIVA" class="bg-forest-black">ZIVA</option>
+                <option value="Escape" class="bg-forest-black">Escape Fitness</option>
+                <option value="Sissel" class="bg-forest-black">Sissel</option>
+                <option value="Other" class="bg-forest-black">Other Brand</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-soft-aqua">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label for="equipmentName" class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+              <span>4. Machine / Location</span>
+              <span class="text-lime-leaf font-mono text-xs">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="equipmentName" 
+              required 
+              placeholder="e.g. Treadmill #3, Leg Press, Smith Machine" 
+              class="form-input w-full rounded-2xl px-4 py-3.5 text-sm placeholder:text-slate-500/80"
+            >
+          </div>
+        </div>
+
+        <!-- 5. NATURE OF QUERY -->
+        <div class="space-y-2.5">
+          <label class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+            <span>5. Query Nature</span>
+            <span class="text-lime-leaf font-mono text-xs">*</span>
+          </label>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            
+            <label class="query-option cursor-pointer block relative">
+              <input type="radio" name="queryType" value="Breakdown / Out of Order" checked class="sr-only">
+              <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
+                <span class="text-xs font-medium text-slate-200">Out of Order / Broken</span>
+                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+              </div>
+            </label>
+
+            <label class="query-option cursor-pointer block relative">
+              <input type="radio" name="queryType" value="Noise / Servicing Needed" class="sr-only">
+              <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
+                <span class="text-xs font-medium text-slate-200">Noise / Needs Servicing</span>
+                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+              </div>
+            </label>
+
+            <label class="query-option cursor-pointer block relative">
+              <input type="radio" name="queryType" value="Cable / Hardware / Pin" class="sr-only">
+              <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
+                <span class="text-xs font-medium text-slate-200">Cable, Pin or Part Issue</span>
+                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+              </div>
+            </label>
+
+            <label class="query-option cursor-pointer block relative">
+              <input type="radio" name="queryType" value="Worn Upholstery / Hygiene" class="sr-only">
+              <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
+                <span class="text-xs font-medium text-slate-200">Worn Pad / Upholstery</span>
+                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+              </div>
+            </label>
+
+            <label class="query-option cursor-pointer block relative">
+              <input type="radio" name="queryType" value="How to Use / Guide" class="sr-only">
+              <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
+                <span class="text-xs font-medium text-slate-200">Usage Instructions / Guide</span>
+                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+              </div>
+            </label>
+
+            <label class="query-option cursor-pointer block relative">
+              <input type="radio" name="queryType" value="General Suggestion / Feedback" class="sr-only">
+              <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
+                <span class="text-xs font-medium text-slate-200">General Feedback / Request</span>
+                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- 6. DESCRIPTION -->
+        <div class="space-y-2">
+          <label for="issueDetails" class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+            <span>6. Description</span>
+            <span class="text-lime-leaf font-mono text-xs">*</span>
+          </label>
+          <textarea 
+            id="issueDetails" 
+            rows="3" 
+            required 
+            placeholder="Please describe the nature of the issue or inquiry..." 
+            class="form-input w-full rounded-2xl px-4 py-3.5 text-sm placeholder:text-slate-500/80 resize-none leading-relaxed"
+          ></textarea>
+        </div>
+
+        <!-- 7. URGENCY -->
+        <div class="space-y-2.5">
+          <label class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+            7. Urgency / Impact
+          </label>
+          <input type="hidden" id="urgencyLevel" value="Medium">
+
+          <div class="grid grid-cols-3 gap-2.5" id="urgencyControl">
+            <button type="button" data-urgency="Low" class="urgency-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center">
+              Low
+              <span class="block text-[10px] text-slate-400 font-light mt-0.5">Inquiry / Note</span>
+            </button>
+
+            <button type="button" data-urgency="Medium" class="urgency-btn active-med py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center">
+              Medium
+              <span class="block text-[10px] text-slate-400 font-light mt-0.5">Needs Attention</span>
+            </button>
+
+            <button type="button" data-urgency="High" class="urgency-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center">
+              High
+              <span class="block text-[10px] text-slate-400 font-light mt-0.5">Unusable / Critical</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 8. CONTACT DETAILS -->
+        <div class="pt-3 border-t border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">8. Contact Information</span>
+            <span class="text-[11px] text-slate-400 font-light lowercase">Optional</span>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label for="userName" class="block text-[10px] text-slate-300 font-medium uppercase tracking-wider mb-1">Your Name</label>
+              <input 
+                type="text" 
+                id="userName" 
+                placeholder="Full name" 
+                class="form-input w-full rounded-2xl px-4 py-3 text-sm placeholder:text-slate-500/80"
+              >
+            </div>
+
+            <div>
+              <label for="userEmail" class="block text-[10px] text-slate-300 font-medium uppercase tracking-wider mb-1">Email Address</label>
+              <input 
+                type="email" 
+                id="userEmail" 
+                placeholder="name@example.com" 
+                class="form-input w-full rounded-2xl px-4 py-3 text-sm placeholder:text-slate-500/80"
+              >
+            </div>
+
+            <div>
+              <label for="userPhone" class="block text-[10px] text-slate-300 font-medium uppercase tracking-wider mb-1">Phone / WhatsApp</label>
+              <input 
+                type="tel" 
+                id="userPhone" 
+                placeholder="e.g. +233..." 
+                class="form-input w-full rounded-2xl px-4 py-3 text-sm placeholder:text-slate-500/80"
+              >
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 font-light leading-snug">
+            Contact information is used solely for technical follow-ups regarding this equipment inquiry.
+          </p>
+        </div>
+
+        <!-- SUBMIT ACTION -->
+        <div class="pt-4">
+          <button 
+            type="submit" 
+            id="submitBtn" 
+            class="submit-gold-btn w-full text-forest-black font-extrabold text-sm tracking-[0.18em] uppercase py-4 px-6 rounded-2xl flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Transmit Query to Watertree</span>
+            <svg class="w-4 h-4 text-forest-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+          </button>
+        </div>
+
+      </form>
+
+      <!-- SUCCESS CONFIRMATION RECEIPT -->
+      <div id="successBox" class="hidden text-center py-10 space-y-6">
+        <div class="w-16 h-16 rounded-full bg-lime-leaf/15 border-2 border-lime-leaf mx-auto flex items-center justify-center text-lime-leaf text-2xl font-bold shadow-[0_0_30px_rgba(112,178,55,0.3)]">
+          ✓
+        </div>
+        
+        <div class="space-y-2">
+          <span class="text-[10px] font-mono tracking-[0.3em] uppercase text-soft-aqua">Confirmation</span>
+          <h2 class="text-3xl font-serif text-white tracking-wide">
+            Query Registered
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-sm mx-auto font-light leading-relaxed">
+            Your query has been logged in the Watertree technical service system. Our technical engineers have been notified.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-forest-black/70 border border-white/10 max-w-sm mx-auto text-left space-y-2 text-xs">
+          <div class="flex justify-between text-slate-400">
+            <span>Ticket Status:</span>
+            <span class="text-lime-leaf font-semibold">Logged / Under Review</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Logged Time:</span>
+            <span class="text-slate-200" id="receiptTime">Just now</span>
+          </div>
+          <div class="flex justify-between text-slate-400 pt-1.5 border-t border-white/5">
+            <span>Support Email:</span>
+            <a href="mailto:hello@watertreeinc.com" class="text-soft-aqua hover:underline font-medium">hello@watertreeinc.com</a>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Support WhatsApp:</span>
+            <a href="https://wa.me/233551442888" target="_blank" class="text-slate-300 hover:text-soft-aqua font-medium">+233 55 144 2888</a>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button 
+            type="button" 
+            id="resetBtn" 
+            class="px-6 py-2.5 rounded-full border border-soft-aqua/40 text-soft-aqua hover:bg-soft-aqua/15 text-xs font-semibold tracking-[0.15em] uppercase transition-all"
+          >
+            ← Submit Another Log
+          </button>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="mt-10 pt-6 border-t border-white/10 text-center space-y-2.5">
+        <p class="text-xs text-slate-400 font-light tracking-wider">
+          Watertree Wellness & Fitness Solutions
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-xs text-slate-300">
+          <a 
+            href="mailto:hello@watertreeinc.com" 
+            class="inline-flex items-center gap-2 text-soft-aqua hover:text-soft-aqua-light transition-colors font-medium tracking-wide"
+          >
+            <span>✉️ hello@watertreeinc.com</span>
+          </a>
+          <span class="hidden sm:inline text-white/20">•</span>
+          <a 
+            href="https://wa.me/233551442888" 
+            target="_blank" 
+            class="inline-flex items-center gap-2 text-slate-400 hover:text-soft-aqua transition-colors font-light tracking-wide"
+          >
+            <span>💬 +233 55 144 2888</span>
+          </a>
+        </div>
+      </footer>
+
+    </div>
+
+  </main>
+
+  <!-- INTERACTIVE JS -->
+  <script>
+    const form = document.getElementById('equipmentQueryForm');
+    const successBox = document.getElementById('successBox');
+    const resetBtn = document.getElementById('resetBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const categoryInput = document.getElementById('equipmentCategory');
+    const urgencyInput = document.getElementById('urgencyLevel');
+
+    // Category button selection
+    document.querySelectorAll('#categoryGrid .cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#categoryGrid .cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        categoryInput.value = btn.dataset.val;
+      });
+    });
+
+    // Urgency segmented selection
+    document.querySelectorAll('#urgencyControl .urgency-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#urgencyControl .urgency-btn').forEach(b => {
+          b.classList.remove('active-low', 'active-med', 'active-high');
+        });
+        const val = btn.dataset.urgency;
+        urgencyInput.value = val;
+        if (val === 'Low') btn.classList.add('active-low');
+        if (val === 'Medium') btn.classList.add('active-med');
+        if (val === 'High') btn.classList.add('active-high');
+      });
+    });
+
+    // Form submission to Flask backend
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Transmitting Query...</span>`;
+
+      const payload = {
+        gymLocation: document.getElementById('gymLocation').value,
+        equipmentCategory: categoryInput.value,
+        brandSelect: document.getElementById('brandSelect').value,
+        equipmentName: document.getElementById('equipmentName').value,
+        queryType: document.querySelector('input[name="queryType"]:checked')?.value || 'General Query',
+        issueDetails: document.getElementById('issueDetails').value,
+        urgencyLevel: urgencyInput.value,
+        userName: document.getElementById('userName').value,
+        userEmail: document.getElementById('userEmail').value,
+        userPhone: document.getElementById('userPhone').value
+      };
+
+      try {
+        const response = await fetch('/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          form.classList.add('hidden');
+          document.getElementById('receiptTime').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          successBox.classList.remove('hidden');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          alert('Could not submit query. Please try again.');
+        }
+      } catch (err) {
+        alert('Server connection error. Please make sure app.py is running.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <span>Transmit Query to Watertree</span>
+          <svg class="w-4 h-4 text-forest-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        `;
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      form.reset();
+      successBox.classList.add('hidden');
+      form.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
