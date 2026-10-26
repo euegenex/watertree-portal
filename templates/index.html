@@ -769,20 +769,24 @@
       const activeBtns = Array.from(document.querySelectorAll('#categoryGrid .cat-btn.active'));
       const selectedCategories = activeBtns.map(b => b.dataset.val);
 
-      const brandSummaryParts = [];
-      const machineSummaryParts = [];
+      const categorySummaryLines = [];
+      const brandSummaryLines = [];
+      const machineSummaryLines = [];
 
-      selectedCategories.forEach(cat => {
+      selectedCategories.forEach((cat, index) => {
         const state = categoryState[cat];
-        const brandsArr = state ? Array.from(state.brands) : ['Any / Not Specified'];
+        const brandsStr = state ? Array.from(state.brands).join(', ') : 'Any / Not Specified';
         const machineText = (state && state.machine.trim()) ? state.machine.trim() : 'Unspecified Unit';
 
         if (selectedCategories.length === 1) {
-          brandSummaryParts.push(brandsArr.join(', '));
-          machineSummaryParts.push(machineText);
+          categorySummaryLines.push(cat);
+          brandSummaryLines.push(brandsStr);
+          machineSummaryLines.push(`${machineText} [${brandsStr}]`);
         } else {
-          brandSummaryParts.push(`${cat}: ${brandsArr.join(', ')}`);
-          machineSummaryParts.push(`${cat}: ${machineText}`);
+          const num = index + 1;
+          categorySummaryLines.push(`${num}. ${cat}`);
+          brandSummaryLines.push(`${num}. ${cat}: ${brandsStr}`);
+          machineSummaryLines.push(`${num}. [${cat} — ${brandsStr}] → ${machineText}`);
         }
       });
 
@@ -800,10 +804,10 @@
 
       const payload = {
         gymLocation: document.getElementById('gymLocation').value,
-        equipmentCategory: selectedCategories.join(' | '),
-        brandSelect: brandSummaryParts.join(' | '),
-        equipmentName: machineSummaryParts.join(' | '),
-        queryType: checkedQueries.length > 0 ? checkedQueries.join(', ') : 'Custom Observation (See Description)',
+        equipmentCategory: categorySummaryLines.join('\n'),
+        brandSelect: brandSummaryLines.join('\n'),
+        equipmentName: machineSummaryLines.join('\n'),
+        queryType: checkedQueries.length > 0 ? checkedQueries.map(q => `• ${q}`).join('\n') : 'Custom Observation (See Description)',
         issueDetails: descriptionVal || 'Selected via quick-check categories',
         urgencyLevel: urgencyInput.value,
         userName: document.getElementById('userName').value,
