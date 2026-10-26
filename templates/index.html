@@ -58,13 +58,26 @@
 
     /* Glass container card */
     .luxury-card {
-      background: linear-gradient(180deg, rgba(8, 46, 51, 0.8) 0%, rgba(4, 27, 31, 0.95) 100%);
+      background: linear-gradient(180deg, rgba(8, 46, 51, 0.82) 0%, rgba(4, 27, 31, 0.96) 100%);
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
       border: 1px solid rgba(47, 159, 168, 0.28);
       box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 
                   0 0 50px rgba(47, 159, 168, 0.08),
                   inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    /* Dynamic Category Sub-Card */
+    .category-detail-card {
+      background: linear-gradient(145deg, rgba(6, 35, 40, 0.9) 0%, rgba(4, 27, 31, 0.85) 100%);
+      border: 1px solid rgba(47, 159, 168, 0.25);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      animation: fadeSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Form Inputs */
@@ -85,25 +98,52 @@
       background-color: rgba(10, 60, 66, 0.7);
     }
 
-    /* Category Pill Selector */
+    /* Multi-Select Category Button */
+    .cat-btn {
+      position: relative;
+    }
     .cat-btn.active {
-      background: linear-gradient(135deg, rgba(47, 159, 168, 0.28) 0%, rgba(10, 60, 66, 0.85) 100%);
+      background: linear-gradient(135deg, rgba(47, 159, 168, 0.3) 0%, rgba(10, 60, 66, 0.9) 100%);
       border-color: #2F9FA8;
       color: #FFFFFF;
-      box-shadow: 0 0 20px rgba(47, 159, 168, 0.25);
+      box-shadow: 0 0 20px rgba(47, 159, 168, 0.22);
+    }
+    .cat-btn .check-badge {
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.2s ease;
+    }
+    .cat-btn.active .check-badge {
+      opacity: 1;
+      transform: scale(1);
     }
 
-    /* Query Radio Pill Selector */
+    /* Interactive Brand Chip */
+    .brand-chip {
+      transition: all 0.2s ease;
+    }
+    .brand-chip.active {
+      background: rgba(47, 159, 168, 0.28);
+      border-color: #58D3DD;
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(47, 159, 168, 0.25);
+    }
+
+    /* Multi-Select Query Nature Checkboxes */
     .query-option input:checked + .query-box {
       background: linear-gradient(135deg, rgba(47, 159, 168, 0.25) 0%, rgba(10, 60, 66, 0.85) 100%);
       border-color: #2F9FA8;
       color: #FFFFFF;
       box-shadow: 0 4px 20px rgba(47, 159, 168, 0.2);
     }
-    .query-option input:checked + .query-box .dot {
+    .query-option input:checked + .query-box .check-icon {
       background-color: #2F9FA8;
       border-color: #2F9FA8;
-      box-shadow: 0 0 8px #2F9FA8;
+      color: #041B1F;
+      box-shadow: 0 0 8px rgba(47, 159, 168, 0.6);
+    }
+    .query-option input:checked + .query-box .check-svg {
+      opacity: 1;
     }
 
     /* Urgency Segmented Control */
@@ -224,194 +264,197 @@
           >
         </div>
 
-        <!-- 2. EQUIPMENT CATEGORY -->
+        <!-- 2. EQUIPMENT CATEGORIES (MULTI-SELECT) -->
         <div class="space-y-2.5">
-          <label class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
-            <span>2. Equipment Category</span>
-            <span class="text-lime-leaf font-mono text-xs">*</span>
-          </label>
-          <input type="hidden" id="equipmentCategory" value="Cardio" required>
+          <div class="flex items-center justify-between">
+            <label class="text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+              2. Equipment Categories
+            </label>
+            <span class="text-[11px] text-slate-400 font-light">Select one or more</span>
+          </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="categoryGrid">
-            <button type="button" data-val="Cardio" class="cat-btn active py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">🏃</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="categoryGrid">
+            <button type="button" data-val="Cardio" data-icon="🏃" class="cat-btn active py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">🏃</span>
               <span>Cardio</span>
             </button>
-            <button type="button" data-val="Strength Machine" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">🏋️</span>
+
+            <button type="button" data-val="Strength Machine" data-icon="🏋️" class="cat-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">🏋️</span>
               <span>Strength</span>
             </button>
-            <button type="button" data-val="Cables & Pulley" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">⛓️</span>
+
+            <button type="button" data-val="Cables & Pulley" data-icon="⛓️" class="cat-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">⛓️</span>
               <span>Cables</span>
             </button>
-            <button type="button" data-val="Free Weights" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">🦾</span>
+
+            <button type="button" data-val="Free Weights" data-icon="🦾" class="cat-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">🦾</span>
               <span>Free Weights</span>
             </button>
-            <button type="button" data-val="Racks & Benches" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">📐</span>
+
+            <button type="button" data-val="Racks & Benches" data-icon="📐" class="cat-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">📐</span>
               <span>Racks & Benches</span>
             </button>
-            <button type="button" data-val="Wellness & Studio" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">🌿</span>
+
+            <button type="button" data-val="Wellness & Spa" data-icon="🌿" class="cat-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">🌿</span>
               <span>Wellness & Spa</span>
             </button>
-            <button type="button" data-val="Flooring & Fixtures" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">🧱</span>
+
+            <button type="button" data-val="Surfaces & Flooring" data-icon="🧱" class="cat-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">🧱</span>
               <span>Surfaces</span>
             </button>
-            <button type="button" data-val="Other / General" class="cat-btn py-2.5 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1">
-              <span class="text-sm">⚙️</span>
+
+            <button type="button" data-val="Other Equipment" data-icon="⚙️" class="cat-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs text-slate-300 font-medium transition-all text-center flex flex-col items-center gap-1 cursor-pointer">
+              <span class="check-badge absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-soft-aqua text-forest-black text-[10px] font-bold flex items-center justify-center">✓</span>
+              <span class="text-base">⚙️</span>
               <span>Other Element</span>
             </button>
           </div>
         </div>
 
-        <!-- 3. BRAND & 4. MACHINE IDENTIFIER -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label for="brandSelect" class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
-              3. Brand
+        <!-- 3. DYNAMIC BRAND & MACHINE MATCHER PER SELECTED CATEGORY -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+              3. Brand & Specific Equipment per Category
             </label>
-            <div class="relative">
-              <select id="brandSelect" class="form-input w-full rounded-2xl px-4 py-3.5 text-sm appearance-none cursor-pointer pr-10">
-                <option value="Any / Not Specified" class="bg-forest-black">Any / Not Specified</option>
-                <option value="Matrix / Vision" class="bg-forest-black">Matrix / Vision</option>
-                <option value="Eleiko" class="bg-forest-black">Eleiko</option>
-                <option value="Woodway" class="bg-forest-black">Woodway</option>
-                <option value="TKO Strength" class="bg-forest-black">TKO Strength</option>
-                <option value="Tunturi" class="bg-forest-black">Tunturi</option>
-                <option value="ZIVA" class="bg-forest-black">ZIVA</option>
-                <option value="Escape" class="bg-forest-black">Escape Fitness</option>
-                <option value="Sissel" class="bg-forest-black">Sissel</option>
-                <option value="Other" class="bg-forest-black">Other Brand</option>
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-soft-aqua">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </div>
-            </div>
+            <span class="text-[11px] text-slate-400 font-light">Tap brands & specify units</span>
           </div>
 
-          <div class="space-y-2">
-            <label for="equipmentName" class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
-              <span>4. Machine / Location</span>
-              <span class="text-lime-leaf font-mono text-xs">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="equipmentName" 
-              required 
-              placeholder="e.g. Treadmill #3, Leg Press, Smith Machine" 
-              class="form-input w-full rounded-2xl px-4 py-3.5 text-sm placeholder:text-slate-500/80"
-            >
+          <div id="dynamicCategoryCards" class="space-y-3.5">
+            <!-- Dynamically populated per selected category -->
           </div>
         </div>
 
-        <!-- 5. NATURE OF QUERY -->
+        <!-- 4. NATURE OF QUERY (MULTI-SELECT CHECKBOXES) -->
         <div class="space-y-2.5">
-          <label class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
-            <span>5. Query Nature</span>
-            <span class="text-lime-leaf font-mono text-xs">*</span>
-          </label>
+          <div class="flex items-center justify-between">
+            <label class="text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
+              4. Query Nature
+            </label>
+            <span class="text-[11px] text-slate-400 font-light">Select all that apply</span>
+          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="queryNatureGroup">
             
             <label class="query-option cursor-pointer block relative">
-              <input type="radio" name="queryType" value="Breakdown / Out of Order" checked class="sr-only">
+              <input type="checkbox" name="queryType" value="Out of Order / Broken" checked class="sr-only">
               <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
                 <span class="text-xs font-medium text-slate-200">Out of Order / Broken</span>
-                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+                <span class="check-icon w-4 h-4 rounded-md border border-slate-600 flex items-center justify-center transition-all">
+                  <svg class="check-svg w-3 h-3 opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </span>
               </div>
             </label>
 
             <label class="query-option cursor-pointer block relative">
-              <input type="radio" name="queryType" value="Noise / Servicing Needed" class="sr-only">
+              <input type="checkbox" name="queryType" value="Noise / Needs Servicing" class="sr-only">
               <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
                 <span class="text-xs font-medium text-slate-200">Noise / Needs Servicing</span>
-                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+                <span class="check-icon w-4 h-4 rounded-md border border-slate-600 flex items-center justify-center transition-all">
+                  <svg class="check-svg w-3 h-3 opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </span>
               </div>
             </label>
 
             <label class="query-option cursor-pointer block relative">
-              <input type="radio" name="queryType" value="Cable / Hardware / Pin" class="sr-only">
+              <input type="checkbox" name="queryType" value="Cable, Pin or Part Issue" class="sr-only">
               <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
                 <span class="text-xs font-medium text-slate-200">Cable, Pin or Part Issue</span>
-                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+                <span class="check-icon w-4 h-4 rounded-md border border-slate-600 flex items-center justify-center transition-all">
+                  <svg class="check-svg w-3 h-3 opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </span>
               </div>
             </label>
 
             <label class="query-option cursor-pointer block relative">
-              <input type="radio" name="queryType" value="Worn Upholstery / Hygiene" class="sr-only">
+              <input type="checkbox" name="queryType" value="Worn Pad / Upholstery" class="sr-only">
               <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
                 <span class="text-xs font-medium text-slate-200">Worn Pad / Upholstery</span>
-                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+                <span class="check-icon w-4 h-4 rounded-md border border-slate-600 flex items-center justify-center transition-all">
+                  <svg class="check-svg w-3 h-3 opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </span>
               </div>
             </label>
 
             <label class="query-option cursor-pointer block relative">
-              <input type="radio" name="queryType" value="How to Use / Guide" class="sr-only">
+              <input type="checkbox" name="queryType" value="Usage Instructions / Guide" class="sr-only">
               <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
                 <span class="text-xs font-medium text-slate-200">Usage Instructions / Guide</span>
-                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+                <span class="check-icon w-4 h-4 rounded-md border border-slate-600 flex items-center justify-center transition-all">
+                  <svg class="check-svg w-3 h-3 opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </span>
               </div>
             </label>
 
             <label class="query-option cursor-pointer block relative">
-              <input type="radio" name="queryType" value="General Suggestion / Feedback" class="sr-only">
+              <input type="checkbox" name="queryType" value="General Feedback / Request" class="sr-only">
               <div class="query-box flex items-center justify-between p-3.5 rounded-2xl bg-forest-black/60 border border-white/10 transition-all hover:border-soft-aqua/40">
                 <span class="text-xs font-medium text-slate-200">General Feedback / Request</span>
-                <span class="dot w-4 h-4 rounded-full border border-slate-600 transition-all"></span>
+                <span class="check-icon w-4 h-4 rounded-md border border-slate-600 flex items-center justify-center transition-all">
+                  <svg class="check-svg w-3 h-3 opacity-0 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </span>
               </div>
             </label>
 
           </div>
         </div>
 
-        <!-- 6. DESCRIPTION -->
+        <!-- 5. DESCRIPTION / OBSERVATIONS -->
         <div class="space-y-2">
           <label for="issueDetails" class="flex items-center justify-between text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
-            <span>6. Description</span>
-            <span class="text-lime-leaf font-mono text-xs">*</span>
+            <span>5. Description & Observations</span>
+            <span class="text-[11px] text-slate-400 font-light normal-case tracking-normal">Add details or describe custom issues</span>
           </label>
           <textarea 
             id="issueDetails" 
             rows="3" 
-            required 
-            placeholder="Please describe the nature of the issue or inquiry..." 
+            placeholder="Describe what you noticed, specific fault symptoms, or any other request..." 
             class="form-input w-full rounded-2xl px-4 py-3.5 text-sm placeholder:text-slate-500/80 resize-none leading-relaxed"
           ></textarea>
         </div>
 
-        <!-- 7. URGENCY -->
+        <!-- 6. URGENCY -->
         <div class="space-y-2.5">
           <label class="block text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">
-            7. Urgency / Impact
+            6. Urgency / Impact
           </label>
           <input type="hidden" id="urgencyLevel" value="Medium">
 
           <div class="grid grid-cols-3 gap-2.5" id="urgencyControl">
-            <button type="button" data-urgency="Low" class="urgency-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center">
+            <button type="button" data-urgency="Low" class="urgency-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center cursor-pointer">
               Low
               <span class="block text-[10px] text-slate-400 font-light mt-0.5">Inquiry / Note</span>
             </button>
 
-            <button type="button" data-urgency="Medium" class="urgency-btn active-med py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center">
+            <button type="button" data-urgency="Medium" class="urgency-btn active-med py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center cursor-pointer">
               Medium
               <span class="block text-[10px] text-slate-400 font-light mt-0.5">Needs Attention</span>
             </button>
 
-            <button type="button" data-urgency="High" class="urgency-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center">
+            <button type="button" data-urgency="High" class="urgency-btn py-3 px-3 rounded-xl border border-white/10 bg-forest-black/60 text-xs font-medium transition-all text-center cursor-pointer">
               High
               <span class="block text-[10px] text-slate-400 font-light mt-0.5">Unusable / Critical</span>
             </button>
           </div>
         </div>
 
-        <!-- 8. CONTACT DETAILS -->
+        <!-- 7. CONTACT DETAILS -->
         <div class="pt-3 border-t border-white/10 space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">8. Contact Information</span>
+            <span class="text-[11px] font-semibold tracking-[0.2em] uppercase text-soft-aqua">7. Contact Information</span>
             <span class="text-[11px] text-slate-400 font-light lowercase">Optional</span>
           </div>
           
@@ -504,7 +547,7 @@
           <button 
             type="button" 
             id="resetBtn" 
-            class="px-6 py-2.5 rounded-full border border-soft-aqua/40 text-soft-aqua hover:bg-soft-aqua/15 text-xs font-semibold tracking-[0.15em] uppercase transition-all"
+            class="px-6 py-2.5 rounded-full border border-soft-aqua/40 text-soft-aqua hover:bg-soft-aqua/15 text-xs font-semibold tracking-[0.15em] uppercase transition-all cursor-pointer"
           >
             ← Submit Another Log
           </button>
@@ -544,15 +587,163 @@
     const successBox = document.getElementById('successBox');
     const resetBtn = document.getElementById('resetBtn');
     const submitBtn = document.getElementById('submitBtn');
-    const categoryInput = document.getElementById('equipmentCategory');
     const urgencyInput = document.getElementById('urgencyLevel');
+    const dynamicContainer = document.getElementById('dynamicCategoryCards');
 
-    // Category button selection
+    // Curated brand options & smart placeholders per category
+    const CATEGORY_META = {
+      'Cardio': {
+        icon: '🏃',
+        brands: ['Matrix / Vision', 'Woodway', 'Tunturi', 'TKO', 'Eleiko', 'ZIVA', 'Escape', 'Sissel', 'Not Sure / Other'],
+        placeholder: 'e.g. Treadmill #3, Elliptical, Spin Bike #2'
+      },
+      'Strength Machine': {
+        icon: '🏋️',
+        brands: ['Matrix / Vision', 'TKO Strength', 'Eleiko', 'ZIVA', 'Tunturi', 'Escape', 'Not Sure / Other'],
+        placeholder: 'e.g. Leg Press, Chest Press, Lat Pulldown'
+      },
+      'Cables & Pulley': {
+        icon: '⛓️',
+        brands: ['Matrix / Vision', 'TKO Strength', 'Eleiko', 'ZIVA', 'Tunturi', 'Not Sure / Other'],
+        placeholder: 'e.g. Dual Adjustable Pulley, Cable Crossover'
+      },
+      'Free Weights': {
+        icon: '🦾',
+        brands: ['Eleiko', 'ZIVA', 'TKO Strength', 'Escape Fitness', 'Matrix / Vision', 'Tunturi', 'Not Sure / Other'],
+        placeholder: 'e.g. 20kg Dumbbells, Olympic Barbell, Kettlebell Rack'
+      },
+      'Racks & Benches': {
+        icon: '📐',
+        brands: ['Eleiko', 'Matrix / Vision', 'ZIVA', 'TKO Strength', 'Escape Fitness', 'Not Sure / Other'],
+        placeholder: 'e.g. Squat Rack #1, Adjustable Incline Bench, Smith Machine'
+      },
+      'Wellness & Spa': {
+        icon: '🌿',
+        brands: ['Sissel', 'Tunturi', 'Escape Fitness', 'ZIVA', 'Watertree Custom', 'Not Sure / Other'],
+        placeholder: 'e.g. Reformer Pilates Bed, Sauna Unit, Studio Mats'
+      },
+      'Surfaces & Flooring': {
+        icon: '🧱',
+        brands: ['Watertree Custom', 'Eleiko', 'Escape Fitness', 'ZIVA', 'Not Sure / Other'],
+        placeholder: 'e.g. Sprint Turf Track, Lifting Platform, Rubber Tiles'
+      },
+      'Other Equipment': {
+        icon: '⚙️',
+        brands: ['Matrix / Vision', 'Eleiko', 'Woodway', 'TKO Strength', 'ZIVA', 'Escape', 'Sissel', 'Tunturi', 'Not Sure / Other'],
+        placeholder: 'Specify equipment name, accessory, or area'
+      }
+    };
+
+    // Store state so user inputs aren't lost when toggling other categories
+    const categoryState = {};
+
+    function ensureCategoryState(cat) {
+      if (!categoryState[cat]) {
+        categoryState[cat] = {
+          brands: new Set(['Any / Not Specified']),
+          machine: ''
+        };
+      }
+    }
+
+    function renderCategoryCards() {
+      const activeBtns = Array.from(document.querySelectorAll('#categoryGrid .cat-btn.active'));
+      dynamicContainer.innerHTML = '';
+
+      activeBtns.forEach(btn => {
+        const cat = btn.dataset.val;
+        ensureCategoryState(cat);
+        const state = categoryState[cat];
+        const meta = CATEGORY_META[cat] || CATEGORY_META['Other Equipment'];
+
+        const card = document.createElement('div');
+        card.className = 'category-detail-card rounded-2xl p-4 sm:p-5 space-y-3.5';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between border-b border-white/10 pb-2.5';
+        header.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-base">${meta.icon}</span>
+            <span class="text-xs font-semibold tracking-wider uppercase text-white">${cat}</span>
+          </div>
+          <span class="text-[10px] text-soft-aqua font-mono">Select Brand(s) & Unit</span>
+        `;
+        card.appendChild(header);
+
+        // Brand Pills (Multi-Select)
+        const brandSection = document.createElement('div');
+        brandSection.className = 'space-y-1.5';
+        brandSection.innerHTML = `<div class="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Brand(s) for ${cat}:</div>`;
+
+        const pillWrap = document.createElement('div');
+        pillWrap.className = 'flex flex-wrap gap-1.5';
+
+        meta.brands.forEach(brandName => {
+          const pill = document.createElement('button');
+          pill.type = 'button';
+          const isSelected = state.brands.has(brandName);
+          pill.className = `brand-chip px-3 py-1.5 rounded-full text-[11px] font-medium border border-white/10 bg-forest-black/70 text-slate-300 cursor-pointer hover:border-soft-aqua/50 ${isSelected ? 'active' : ''}`;
+          pill.textContent = brandName;
+
+          pill.addEventListener('click', () => {
+            if (state.brands.has('Any / Not Specified')) {
+              state.brands.delete('Any / Not Specified');
+            }
+            if (state.brands.has(brandName)) {
+              state.brands.delete(brandName);
+              pill.classList.remove('active');
+            } else {
+              state.brands.add(brandName);
+              pill.classList.add('active');
+            }
+            if (state.brands.size === 0) {
+              state.brands.add('Any / Not Specified');
+            }
+          });
+
+          pillWrap.appendChild(pill);
+        });
+
+        brandSection.appendChild(pillWrap);
+        card.appendChild(brandSection);
+
+        // Specific Machine / Location Input for this Category
+        const inputWrap = document.createElement('div');
+        inputWrap.className = 'space-y-1';
+        inputWrap.innerHTML = `
+          <label class="block text-[10px] text-slate-400 uppercase tracking-wider font-medium">Specific ${cat} Machine(s) or Location <span class="text-lime-leaf">*</span></label>
+        `;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.required = true;
+        input.value = state.machine;
+        input.placeholder = meta.placeholder;
+        input.className = 'form-input w-full rounded-xl px-3.5 py-2.5 text-xs sm:text-sm placeholder:text-slate-500/80';
+        input.addEventListener('input', (e) => {
+          state.machine = e.target.value;
+        });
+
+        inputWrap.appendChild(input);
+        card.appendChild(inputWrap);
+
+        dynamicContainer.appendChild(card);
+      });
+    }
+
+    // Initialize with default active category (Cardio)
+    renderCategoryCards();
+
+    // Multi-select Category toggling
     document.querySelectorAll('#categoryGrid .cat-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('#categoryGrid .cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        categoryInput.value = btn.dataset.val;
+        const activeCount = document.querySelectorAll('#categoryGrid .cat-btn.active').length;
+        // Prevent unselecting the very last category so at least 1 is always active
+        if (btn.classList.contains('active') && activeCount <= 1) {
+          return;
+        }
+        btn.classList.toggle('active');
+        renderCategoryCards();
       });
     });
 
@@ -573,16 +764,47 @@
     // Form submission to Flask backend
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      // Gather selected categories, their brands, and their machine names
+      const activeBtns = Array.from(document.querySelectorAll('#categoryGrid .cat-btn.active'));
+      const selectedCategories = activeBtns.map(b => b.dataset.val);
+
+      const brandSummaryParts = [];
+      const machineSummaryParts = [];
+
+      selectedCategories.forEach(cat => {
+        const state = categoryState[cat];
+        const brandsArr = state ? Array.from(state.brands) : ['Any / Not Specified'];
+        const machineText = (state && state.machine.trim()) ? state.machine.trim() : 'Unspecified Unit';
+
+        if (selectedCategories.length === 1) {
+          brandSummaryParts.push(brandsArr.join(', '));
+          machineSummaryParts.push(machineText);
+        } else {
+          brandSummaryParts.push(`${cat}: ${brandsArr.join(', ')}`);
+          machineSummaryParts.push(`${cat}: ${machineText}`);
+        }
+      });
+
+      // Gather multi-select Query Nature checkboxes
+      const checkedQueries = Array.from(document.querySelectorAll('input[name="queryType"]:checked')).map(cb => cb.value);
+      const descriptionVal = document.getElementById('issueDetails').value.trim();
+
+      if (checkedQueries.length === 0 && !descriptionVal) {
+        alert('Please select at least one Query Nature or enter a description of the issue.');
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.innerHTML = `<span>Transmitting Query...</span>`;
 
       const payload = {
         gymLocation: document.getElementById('gymLocation').value,
-        equipmentCategory: categoryInput.value,
-        brandSelect: document.getElementById('brandSelect').value,
-        equipmentName: document.getElementById('equipmentName').value,
-        queryType: document.querySelector('input[name="queryType"]:checked')?.value || 'General Query',
-        issueDetails: document.getElementById('issueDetails').value,
+        equipmentCategory: selectedCategories.join(' | '),
+        brandSelect: brandSummaryParts.join(' | '),
+        equipmentName: machineSummaryParts.join(' | '),
+        queryType: checkedQueries.length > 0 ? checkedQueries.join(', ') : 'Custom Observation (See Description)',
+        issueDetails: descriptionVal || 'Selected via quick-check categories',
         urgencyLevel: urgencyInput.value,
         userName: document.getElementById('userName').value,
         userEmail: document.getElementById('userEmail').value,
@@ -617,6 +839,12 @@
 
     resetBtn.addEventListener('click', () => {
       form.reset();
+      Object.keys(categoryState).forEach(k => delete categoryState[k]);
+      document.querySelectorAll('#categoryGrid .cat-btn').forEach((b, idx) => {
+        if (idx === 0) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+      renderCategoryCards();
       successBox.classList.add('hidden');
       form.classList.remove('hidden');
     });
