@@ -38,7 +38,6 @@ def init_excel():
         ]
         ws.append(headers)
 
-        # Style Header Row (Watertree Deep Teal #0A3C42)
         header_fill = PatternFill(start_color="0A3C42", end_color="0A3C42", fill_type="solid")
         header_font = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
         header_align = Alignment(horizontal="center", vertical="center", wrap_text=True)
@@ -59,27 +58,29 @@ def init_excel():
         ws.row_dimensions[1].height = 28
 
         col_widths = {
-            1: 12,   # Log ID
-            2: 18,   # Timestamp
-            3: 24,   # Facility Name
-            4: 20,   # Category
-            5: 18,   # Brand
-            6: 25,   # Machine
-            7: 24,   # Query Nature
-            8: 15,   # Urgency Level
-            9: 45,   # Description
-            10: 20,  # Member Name
-            11: 28,  # Member Email
-            12: 22,  # Phone / WhatsApp
-            13: 16   # Status
+            1: 12,
+            2: 18,
+            3: 24,
+            4: 20,
+            5: 18,
+            6: 25,
+            7: 24,
+            8: 15,
+            9: 45,
+            10: 20,
+            11: 28,
+            12: 22,
+            13: 16
         }
         for col_num, width in col_widths.items():
             ws.column_dimensions[get_column_letter(col_num)].width = width
 
         wb.save(EXCEL_FILE)
 
-# Ensure sheet exists on startup
-init_excel()
+try:
+    init_excel()
+except Exception as startup_err:
+    print(f"Startup Excel check: {startup_err}")
 
 @app.route('/')
 def index():
@@ -89,62 +90,65 @@ def index():
 def submit():
     try:
         data = request.get_json() or {}
-        
-        # 1. Save to local/container Excel file
-        init_excel()
-        wb = openpyxl.load_workbook(EXCEL_FILE)
-        ws = wb.active
-
-        log_id = f"WT-{ws.max_row:04d}"
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         urgency = data.get('urgencyLevel', 'Medium')
+        log_id = f"WT-{datetime.now().strftime('%H%M%S')}"
 
-        row_data = [
-            log_id,
-            now,
-            data.get('gymLocation', 'Not Specified'),
-            data.get('equipmentCategory', 'Cardio'),
-            data.get('brandSelect', 'Any / Not Specified'),
-            data.get('equipmentName', 'General Area'),
-            data.get('queryType', 'General Query'),
-            urgency,
-            data.get('issueDetails', 'No details provided'),
-            data.get('userName', 'Anonymous Member'),
-            data.get('userEmail', 'Not Provided'),
-            data.get('userPhone', 'Not Provided'),
-            "New / Open"
-        ]
+        # 1. Save to local/container Excel file
+        try:
+            init_excel()
+            wb = openpyxl.load_workbook(EXCEL_FILE)
+            ws = wb.active
+            log_id = f"WT-{ws.max_row:04d}"
 
-        ws.append(row_data)
-        current_row = ws.max_row
+            row_data = [
+                log_id,
+                now,
+                data.get('gymLocation', 'Not Specified'),
+                data.get('equipmentCategory', 'Cardio'),
+                data.get('brandSelect', 'Any / Not Specified'),
+                data.get('equipmentName', 'General Area'),
+                data.get('queryType', 'General Query'),
+                urgency,
+                data.get('issueDetails', 'No details provided'),
+                data.get('userName', 'Anonymous Member'),
+                data.get('userEmail', 'Not Provided'),
+                data.get('userPhone', 'Not Provided'),
+                "New / Open"
+            ]
 
-        row_font = Font(name="Calibri", size=10)
-        center_align = Alignment(horizontal="center", vertical="center")
-        left_align = Alignment(horizontal="left", vertical="center", wrap_text=True)
+            ws.append(row_data)
+            current_row = ws.max_row
 
-        for col_num in range(1, len(row_data) + 1):
-            cell = ws.cell(row=current_row, column=col_num)
-            cell.font = row_font
-            if col_num in [1, 2, 8, 13]:
-                cell.alignment = center_align
-            else:
-                cell.alignment = left_align
+            row_font = Font(name="Calibri", size=10)
+            center_align = Alignment(horizontal="center", vertical="center")
+            left_align = Alignment(horizontal="left", vertical="center", wrap_text=True)
 
-        urgency_cell = ws.cell(row=current_row, column=8)
-        if urgency == "High":
-            urgency_cell.font = Font(name="Calibri", size=10, bold=True, color="9C0006")
-            urgency_cell.fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
-        elif urgency == "Medium":
-            urgency_cell.font = Font(name="Calibri", size=10, bold=True, color="9C6500")
-            urgency_cell.fill = PatternFill(start_color="FFEB9C", end_color="FFEB9C", fill_type="solid")
+            for col_num in range(1, len(row_data) + 1):
+                cell = ws.cell(row=current_row, column=col_num)
+                cell.font = row_font
+                if col_num in [1, 2, 8, 13]:
+                    cell.alignment = center_align
+                else:
+                    cell.alignment = left_align
 
-        ws.row_dimensions[current_row].height = 24
-        wb.save(EXCEL_FILE)
+            urgency_cell = ws.cell(row=current_row, column=8)
+            if urgency == "High":
+                urgency_cell.font = Font(name="Calibri", size=10, bold=True, color="9C0006")
+                urgency_cell.fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+            elif urgency == "Medium":
+                urgency_cell.font = Font(name="Calibri", size=10, bold=True, color="9C6500")
+                urgency_cell.fill = PatternFill(start_color="FFEB9C", end_color="FFEB9C", fill_type="solid")
+
+            ws.row_dimensions[current_row].height = 24
+            wb.save(EXCEL_FILE)
+        except Exception as excel_err:
+            print(f"Local Excel save notice: {excel_err}")
 
         # 2. Forward to Google Sheets & Trigger Office Email Alert
         if GOOGLE_WEBHOOK_URL:
             try:
-                 payload_bytes = json.dumps(data).encode('utf-8')
+                payload_bytes = json.dumps(data).encode('utf-8')
                 req = urllib.request.Request(
                     GOOGLE_WEBHOOK_URL,
                     data=payload_bytes,
