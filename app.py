@@ -1,4 +1,6 @@
 import os
+import json
+import urllib.request
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, send_file
 import openpyxl
@@ -9,6 +11,9 @@ app = Flask(__name__)
 
 EXCEL_FILE = 'feedback.xlsx'
 
+# Google Apps Script Webhook URL (Logs to Google Sheets & sends Office Email Alert)
+GOOGLE_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbz2Zo5QSSf-TtvvSrBHg_h1ZGu1UL41Gwdo7ZhSQHP9eNajQic3H2RyiUaOmd45Lkg/exec"
+
 def init_excel():
     """Initializes the Excel workbook with Watertree branding if it does not exist."""
     if not os.path.exists(EXCEL_FILE):
@@ -16,7 +21,6 @@ def init_excel():
         ws = wb.active
         ws.title = "Equipment Queries"
 
-        # Headers matching the 8 form sections
         headers = [
             "Log ID",
             "Timestamp",
@@ -54,7 +58,6 @@ def init_excel():
 
         ws.row_dimensions[1].height = 28
 
-        # Column widths for clean readability
         col_widths = {
             1: 12,   # Log ID
             2: 18,   # Timestamp
@@ -87,7 +90,7 @@ def submit():
     try:
         data = request.get_json() or {}
         
-        # Ensure workbook exists and load
+        # 1. Save to local/container Excel file
         init_excel()
         wb = openpyxl.load_workbook(EXCEL_FILE)
         ws = wb.active
@@ -115,7 +118,6 @@ def submit():
         ws.append(row_data)
         current_row = ws.max_row
 
-        # Standard text font and alignment
         row_font = Font(name="Calibri", size=10)
         center_align = Alignment(horizontal="center", vertical="center")
         left_align = Alignment(horizontal="left", vertical="center", wrap_text=True)
@@ -128,7 +130,6 @@ def submit():
             else:
                 cell.alignment = left_align
 
-        # Urgency highlight styling
         urgency_cell = ws.cell(row=current_row, column=8)
         if urgency == "High":
             urgency_cell.font = Font(name="Calibri", size=10, bold=True, color="9C0006")
@@ -139,6 +140,21 @@ def submit():
 
         ws.row_dimensions[current_row].height = 24
         wb.save(EXCEL_FILE)
+
+        # 2. Forward to Google Sheets & Trigger Office Email Alert
+        if GOOGLE_WEBHOOK_URL:
+            try:
+                 payload_bytes = json.dumps(data).encode('utf-8')
+                req = urllib.request.Request(
+                    GOOGLE_WEBHOOK_URL,
+                    data=payload_bytes,
+                    headers={'Content-Type': 'application/json'},
+                    method='POST'
+                )
+                with urllib.request.urlopen(req, timeout=12) as response:
+                    _ = response.read()
+            except Exception as webhook_err:
+                print(f"Google Sheets webhook notice: {webhook_err}")
 
         return jsonify({"status": "success", "log_id": log_id, "timestamp": now}), 200
 
